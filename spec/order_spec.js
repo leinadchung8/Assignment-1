@@ -1,23 +1,26 @@
-import { Order } from '../Order.js';
+import { Order } from "../Order.js";
 
-describe("Tests all stages of an order", function() {
-    it("test hello", function() {
-        const oOrder = new Order("999-999-9999");
-        const aResults = oOrder.handleInput("hello");
-        expect(aResults[0]).toBe("Welcome to Rich's Acton Rapid Test.");
+describe("Food Order Bot", function () {
+    it("should welcome the user", function () {
+        let order = new Order("999-999-9999");
+        let responses = order.handleInput("");
+        expect(responses[0]).toBe("Welcome to Dream Restaurant!");
     });
-    it("test yes", function() {
-        const oOrder = new Order("999-999-9999");
-        oOrder.handleInput("hello");
-        const aResults = oOrder.handleInput("yes");
-        expect(aResults[0]).toBe("Your rapid test is reserved under the phone number 999-999-9999");
+
+    it("should take an order for pizza", function () {
+        let order = new Order("999-999-9999");
+        order.handleInput("");
+        let responses = order.handleInput("pizza");
+        expect(responses[0]).toBe("What size pizza would you like? (Small, Medium, Large)");
     });
-    it("test no", function() {
-        const oOrder = new Order("999-999-9999");
-        oOrder.handleInput("hello");
-        const aResults = oOrder.handleInput("no");
-        expect(aResults[0]).toBe("Thanks for trying our reservation system");
+
+    it("should offer drink upsell", function () {
+        let order = new Order("999-999-9999");
+        order.handleInput("");
+        order.handleInput("burger");
+        order.handleInput("Medium");
+        order.handleInput("Cheese");
+        let responses = order.handleInput("Yes");
+        expect(responses[0]).toContain("Great! We've added a drink to your order.");
     });
-  });
-  
-  
+});

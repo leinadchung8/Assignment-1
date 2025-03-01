@@ -1,37 +1,79 @@
 export class Order {
-    constructor(sFrom) {
+  constructor(sFrom) {
       this.OrderState = {
-        WELCOMING: () => {
-          let aReturn = [];
-          this.stateCur = this.OrderState.RESERVING;
-          aReturn.push("Welcome to Rich's Acton Rapid Test.");
-          aReturn.push("Would you like to reserve a rapid test kit?");
-          return aReturn;
-        },
-        RESERVING: (sInput) => {
-          let aReturn = [];
-          this.isDone = true;
-          if (sInput.toLowerCase().startsWith('y')) {
-            aReturn.push(`Your rapid test is reserved under the phone number ${this.sFrom}`);
-            let d = new Date();
-            d.setMinutes(d.getMinutes() + 120);
-            aReturn.push(`Please pick it up at 123 Tidy St., Acton before ${d.toTimeString()}`);
-          } else {
-            aReturn.push("Thanks for trying our reservation system");
-            aReturn.push("Maybe next time");
+          WELCOMING: () => {
+              let aReturn = [];
+              this.stateCur = this.OrderState.ORDERING;
+              aReturn.push("Welcome to Dream Restaurant!");
+              aReturn.push("What would you like to order? We have Pizza and Burgers.");
+              return aReturn;
+          },
+          ORDERING: (sInput) => {
+              let aReturn = [];
+              if (sInput.toLowerCase().includes("pizza")) {
+                  this.order = { item: "Pizza", size: null, toppings: null };
+                  this.stateCur = this.OrderState.SIZE;
+                  aReturn.push("What size pizza would you like? (Small, Medium, Large)");
+              } else if (sInput.toLowerCase().includes("burger")) {
+                  this.order = { item: "Burger", size: null, toppings: null };
+                  this.stateCur = this.OrderState.SIZE;
+                  aReturn.push("What size burger would you like? (Small, Medium, Large)");
+              } else {
+                  aReturn.push("Sorry, we only have Pizza and Burgers. Please choose one.");
+              }
+              return aReturn;
+          },
+          SIZE: (sInput) => {
+              let aReturn = [];
+              this.order.size = sInput;
+              this.stateCur = this.OrderState.TOPPINGS;
+              aReturn.push(`Great choice! What toppings would you like on your ${this.order.item}?`);
+              return aReturn;
+          },
+          TOPPINGS: (sInput) => {
+              let aReturn = [];
+              this.order.toppings = sInput;
+              this.stateCur = this.OrderState.UPSELL;
+              aReturn.push(`Got it! Would you like a drink with that? (Yes/No)`);
+              return aReturn;
+          },
+          UPSELL: (sInput) => {
+              let aReturn = [];
+              if (sInput.toLowerCase().startsWith("y")) {
+                  this.order.drink = "Yes";
+                  aReturn.push("Great! We've added a drink to your order.");
+              } else {
+                  this.order.drink = "No";
+                  aReturn.push("No drink added.");
+              }
+              this.stateCur = this.OrderState.CONFIRMATION;
+              aReturn.push(`You ordered a ${this.order.size} ${this.order.item} with ${this.order.toppings}.`);
+              if (this.order.drink === "Yes") aReturn.push("Including a drink.");
+              aReturn.push("Would you like to confirm your order? (Yes/No)");
+              return aReturn;
+          },
+          CONFIRMATION: (sInput) => {
+              let aReturn = [];
+              if (sInput.toLowerCase().startsWith("y")) {
+                  aReturn.push("Thank you! Your order has been placed.");
+              } else {
+                  aReturn.push("Order canceled.");
+              }
+              this.isDone = true;
+              return aReturn;
           }
-          return aReturn;
-        }
       };
-  
+
       this.stateCur = this.OrderState.WELCOMING;
       this.isDone = false;
       this.sFrom = sFrom;
-    }
-    handleInput(sInput) {
-      return this.stateCur(sInput);
-    }
-    isDone() {
-      return this.isDone;
-    }
   }
+
+  handleInput(sInput) {
+      return this.stateCur(sInput);
+  }
+
+  isDone() {
+      return this.isDone;
+  }
+}
